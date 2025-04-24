@@ -1,0 +1,9 @@
+rules:
+  - id: regex-dos-risk
+    message: |
+      Возможен ReDoS: тяжёлый вызов `re.search` со сложным регулярным выражением.
+      Рассмотрите упрощение паттерна или ограничение длины входа.
+    languages: [python]
+    severity: WARNING
+    pattern-regex: >
+      re\.search\([\s\S]*r"[^"]{20,}"[\s\S]*\)
