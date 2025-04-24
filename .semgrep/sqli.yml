@@ -1,11 +1,14 @@
-# .semgrep/sqli-variable.yml
+# файл .semgrep/sqli-sequence.yml
 rules:
-  - id: sqli-fstring-variable
-    message: "Поймали SQLi через f-строку в переменной"
+  - id: sqli-raw-user-query
+    message: |
+      Обнаружена потенциальная SQL-инъекция: f-строка сохраняется в переменную
+      и затем передаётся в db.session.execute без параметризации.
+      Используйте вместо этого:
+        text("… WHERE username = :username"), {"username": username}
     languages: [python]
     severity: ERROR
-    patterns:
-      - pattern: |
-          $Q = f"...{...}..."
-      - pattern-inside: |
-          db.session.execute(text($Q))
+    pattern: |
+      $Q = f"...{...}..."
+      ...
+      db.session.execute(text($Q))
