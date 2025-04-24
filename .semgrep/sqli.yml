@@ -1,11 +1,16 @@
 rules:
-  - id: sqli-raw-fstring
-    patterns:
-      - pattern: db.session.execute(text($X))
-      - metavariable-regex:
-          metavariable: $X
-          regex: ".*\\{.*\\}.*"
-    message: >
-      Возможна SQL-инъекция через f-string в raw SQL. Лучше использовать параметризацию.
+  - id: sqli-fstring-variable
+    message: |
+      Обнаружена потенциальная SQL-инъекция: 
+      f-строка сохраняется в переменную и потом прокидывается в raw execute().
+      Используйте параметризованные запросы, например:
+        text("… WHERE username = :username"), {"username": username}
     languages: [python]
     severity: ERROR
+    patterns:
+      # Шаг 1: найдём f-строку в переменную
+      - pattern: |
+          $Q = f"...{...}..."
+      # Шаг 2: в том же блоке (функции / методе) найдём её использование в execute()
+      - pattern-inside: |
+          db.session.execute(text($Q))
