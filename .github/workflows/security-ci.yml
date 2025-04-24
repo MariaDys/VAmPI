@@ -81,13 +81,21 @@ jobs:
 
       - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
-        with:
-          args: detect --source . --report-path=gitleaks-report.json
+        env:
+          # этот токен автоматически создаётся для Actions
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Show Gitleaks report
+      - name: Show Gitleaks results
         if: always()
         run: |
           echo "=== gitleaks results ==="
-          cat gitleaks-report.json
+          # Gitleaks выводит результаты в stdout, поэтому просто выводим лог
+
+      - name: Upload Gitleaks report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: gitleaks-report
+          path: gitleaks-report.json
 
           
