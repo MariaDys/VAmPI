@@ -1,6 +1,0 @@
-rules:
-  - id: detect-select
-    message: "Найдено слово SELECT — правило работает!"
-    languages: [python]
-    severity: WARNING
-    pattern-regex: (?i)\bSELECT\b
