@@ -2,7 +2,7 @@ rules:
   - id: regex-dos-risk
     message: |
       Возможен ReDoS: тяжёлый вызов `re.search` со сложным регулярным выражением.
-      Рассмотрите упрощение паттерна или ограничение длины входа.
+      Необходимо упростить паттерн или ограничить длину входа.
     languages: [python]
     severity: WARNING
     pattern-regex: >
