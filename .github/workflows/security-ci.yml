@@ -71,27 +71,28 @@ jobs:
           echo "=== semgrep results ==="
           cat semgrep-report.json
           
-  gitleaks-scan:
+  secret-scan:
+    name: Secret scan (Gitleaks CLI)
     runs-on: ubuntu-latest
+    needs: static-scan
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Run Gitleaks (local scan)
-        uses: gitleaks/gitleaks-action@v2
-        with:
-          args: detect --no-git --source . --report-format json --report-path gitleaks-report.json
+      - name: Run Gitleaks CLI in Docker
+        run: |
+          # Подмонтируем текущую директорию в /src контейнера,
+          # запустим gitleaks detect и сохраним JSON-отчёт
+          docker run --rm \
+            -v "${{ github.workspace }}:/src" \
+            zricethezav/gitleaks:8.24.3 \
+            detect --no-git --source /src \
+                   --report-format json \
+                   --report-path /src/gitleaks-report.json || true
 
-      - name: Show results
+      - name: Show Gitleaks report
         if: always()
         run: |
           echo "=== Gitleaks Results ==="
           cat gitleaks-report.json || echo "No secrets found."
 
-      - name: Upload report (optional)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gitleaks-report
-          path: gitleaks-report.json
-          
