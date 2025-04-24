@@ -35,3 +35,31 @@ jobs:
         run: |
           echo "=== pip-audit results ==="
           cat pip-audit-report.json
+
+  static-scan:
+    name: Static code analysis (Semgrep)
+    runs-on: ubuntu-latest
+    needs: deps-scan
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Semgrep
+        run: |
+          pip install semgrep
+
+      - name: Run Semgrep
+        run: |
+          # semgrep найдёт инъекции и другие проблемы
+          semgrep --config=r/python-security --timeout 120 --json > semgrep-report.json || true
+
+      - name: Show Semgrep report
+        if: always()
+        run: |
+          echo "=== semgrep results ==="
+          cat semgrep-report.json
