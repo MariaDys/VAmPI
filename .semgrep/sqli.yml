@@ -1,16 +1,8 @@
 rules:
-  - id: sqli-fstring-variable
+  - id: detect-sqli-fstring
     message: |
-      Обнаружена потенциальная SQL-инъекция: 
-      f-строка сохраняется в переменную и потом прокидывается в raw execute().
-      Используйте параметризованные запросы, например:
-        text("… WHERE username = :username"), {"username": username}
+      Потенциальная SQL-инъекция: f-строка c SELECT и подстановкой переменной.
+      Используйте параметризацию (text("… WHERE username = :username"), {"username": username})
     languages: [python]
     severity: ERROR
-    patterns:
-      # Шаг 1: найдём f-строку в переменную
-      - pattern: |
-          $Q = f"...{...}..."
-      # Шаг 2: в том же блоке (функции / методе) найдём её использование в execute()
-      - pattern-inside: |
-          db.session.execute(text($Q))
+    pattern-regex: (?i)f"SELECT.*\{.*\}.*"
