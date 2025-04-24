@@ -78,22 +78,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+  
       - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
+        with:
+          report-format: json
+          report-path: gitleaks-report.json
         env:
-          # этот токен автоматически создаётся для Actions
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+  
       - name: Show Gitleaks results
         if: always()
         run: |
           echo "=== gitleaks results ==="
-          # Gitleaks выводит результаты в stdout, поэтому просто выводим лог
-
+          cat gitleaks-report.json || echo "No report generated"
+  
       - name: Upload Gitleaks report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: gitleaks-report
           path: gitleaks-report.json
