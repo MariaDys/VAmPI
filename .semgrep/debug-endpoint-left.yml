@@ -1,0 +1,10 @@
+rules:
+  - id: debug-endpoint-left
+    message: |
+      endpoint `debug` остаётся на проме и возвращает пароли пользователей.
+      Необходимо убрать этот метод.
+    languages: [python]
+    severity: WARNING
+    pattern: |
+      def debug():
+          return jsonify({'users': User.get_all_users_debug()})

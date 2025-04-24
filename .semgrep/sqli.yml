@@ -1,0 +1,12 @@
+rules:
+  - id: sqli-raw-user-query
+    message: |
+      Обнаружен риск SQL-инъекции: f-строка сохраняется в переменную
+      и затем передаётся в db.session.execute без параметризации.
+      Необходимо использовать параметризацию.
+    languages: [python]
+    severity: ERROR
+    pattern: |
+      $Q = f"...{...}..."
+      ...
+      db.session.execute(text($Q))

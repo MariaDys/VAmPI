@@ -1,0 +1,9 @@
+rules:
+  - id: verbose-auth-error
+    message: |
+      Password/User Enumeration:
+      разные тексты ошибок при логине раскрывают, что именно неверно - логин или пароль((
+      Нужно возвращать одинаковое сообщение.
+    languages: [python]
+    severity: WARNING
+    pattern-regex: (?i)(Password\s+is\s+not\s+correct|Username\s+does\s+not\s+exist)
