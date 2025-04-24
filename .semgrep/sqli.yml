@@ -1,0 +1,12 @@
+rules:
+  - id: sqli-raw-fstring
+    patterns:
+      - pattern: db.session.execute(text(f"..."))
+      - metavariable-regex:
+          metavariable: $X
+          regex: ".*\\{.*\\}.*"
+    message: >
+      Возможная SQL-инъекция через f-string. Лучше использовать параметризацию, например:
+      text("SELECT * FROM users WHERE username = :username"), {"username": username}
+    languages: [python]
+    severity: ERROR
