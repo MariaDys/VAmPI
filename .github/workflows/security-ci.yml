@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - develop
-      - 'feature/**'
+      - "feature/**"
   pull_request:
     branches:
       - develop
@@ -14,7 +14,8 @@ jobs:
     name: Dependency scan (pip-audit)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -29,7 +30,8 @@ jobs:
         run: |
           pip-audit --format json --output pip-audit-report.json || true
 
-      - name: Upload report
+      - name: Upload pip-audit report
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: pip-audit-report
