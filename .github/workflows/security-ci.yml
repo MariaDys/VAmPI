@@ -53,10 +53,10 @@ jobs:
         run: |
           pip install semgrep
 
-      - name: Run Semgrep
+      - name: Run Semgrep (verbose)
         run: |
-          # кастомные правила из .semgrep/
-          semgrep --config=.semgrep --timeout 120 --json > semgrep-report.json || true
+          semgrep --config=.semgrep --timeout 120 --json --verbose > semgrep-report.json || true
+
 
       - name: Show Semgrep report
         if: always()
