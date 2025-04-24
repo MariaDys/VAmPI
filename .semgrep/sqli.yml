@@ -1,8 +1,11 @@
+# .semgrep/sqli-variable.yml
 rules:
-  - id: detect-sqli-fstring
-    message: |
-      Потенциальная SQL-инъекция: f-строка c SELECT и подстановкой переменной.
-      Используйте параметризацию (text("… WHERE username = :username"), {"username": username})
+  - id: sqli-fstring-variable
+    message: "Поймали SQLi через f-строку в переменной"
     languages: [python]
     severity: ERROR
-    pattern-regex: (?i)f"SELECT.*\{.*\}.*"
+    patterns:
+      - pattern: |
+          $Q = f"...{...}..."
+      - pattern-inside: |
+          db.session.execute(text($Q))
