@@ -1,7 +1,7 @@
 rules:
   - id: broken-object-permission
     message: |
-      Разрешение на сломанный объект:
+      Недостаточная проверка прав:
       фильтр возвращает книгу по title без проверки, что она принадлежит текущему пользователю.
       Правильно: `.filter_by(user=user, book_title=...)`.
     languages: [python]
