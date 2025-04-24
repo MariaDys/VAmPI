@@ -1,11 +1,9 @@
-# файл .semgrep/sqli-sequence.yml
 rules:
   - id: sqli-raw-user-query
     message: |
-      Обнаружена потенциальная SQL-инъекция: f-строка сохраняется в переменную
+      Обнаружен риск SQL-инъекции: f-строка сохраняется в переменную
       и затем передаётся в db.session.execute без параметризации.
-      Используйте вместо этого:
-        text("… WHERE username = :username"), {"username": username}
+      Необходимо использовать параметризацию.
     languages: [python]
     severity: ERROR
     pattern: |
