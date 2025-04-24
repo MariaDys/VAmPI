@@ -1,0 +1,10 @@
+rules:
+  - id: broken-object-permission
+    message: |
+      Разрешение на сломанный объект:
+      фильтр возвращает книгу по title без проверки, что она принадлежит текущему пользователю.
+      Правильно: `.filter_by(user=user, book_title=...)`.
+    languages: [python]
+    severity: ERROR
+    pattern: |
+      book = Book.query.filter_by(book_title=$TITLE).first()
