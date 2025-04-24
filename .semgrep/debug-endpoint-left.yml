@@ -1,8 +1,8 @@
 rules:
   - id: debug-endpoint-left
     message: |
-      Отладочный endpoint `debug` остаётся в продакшене и возвращает пароли пользователей.
-      Уберите этот метод или защитите его.
+      endpoint `debug` остаётся на проме и возвращает пароли пользователей.
+      Необходимо убрать этот метод.
     languages: [python]
     severity: WARNING
     pattern: |
