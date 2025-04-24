@@ -70,3 +70,24 @@ jobs:
         run: |
           echo "=== semgrep results ==="
           cat semgrep-report.json
+          
+  secret-scan:
+    name: Secret scan (Gitleaks)
+    runs-on: ubuntu-latest
+    needs: static-scan
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Gitleaks
+        uses: zricethezav/gitleaks-action@v8
+        with:
+          args: detect --source . --report-path=gitleaks-report.json
+
+      - name: Show Gitleaks report
+        if: always()
+        run: |
+          echo "=== gitleaks results ==="
+          cat gitleaks-report.json
+
+          
