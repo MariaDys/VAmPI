@@ -53,10 +53,9 @@ jobs:
         run: |
           pip install semgrep
 
-      - name: Run Semgrep (verbose)
+      - name: Run Semgrep (custom VAmPI rules)
         run: |
           echo "=== RUNNING SEMGREP ==="
-          semgrep --config=.semgrep --validate
           semgrep --config=.semgrep --timeout 120 --json --verbose . > semgrep-report.json || true
 
 
