@@ -30,9 +30,8 @@ jobs:
         run: |
           pip-audit --format json --output pip-audit-report.json || true
 
-      - name: Upload pip-audit report
+      - name: Show pip-audit report
         if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: pip-audit-report
-          path: pip-audit-report.json
+        run: |
+          echo "=== pip-audit results ==="
+          cat pip-audit-report.json
