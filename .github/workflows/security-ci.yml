@@ -55,6 +55,8 @@ jobs:
 
       - name: Run Semgrep (verbose)
         run: |
+          echo "=== RUNNING SEMGREP ==="
+          semgrep --config=.semgrep --validate  # <- проверка правил
           semgrep --config=.semgrep --timeout 120 --json --verbose > semgrep-report.json || true
 
 
