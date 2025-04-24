@@ -53,11 +53,16 @@ jobs:
         run: |
           pip install semgrep
 
-      - name: Run Semgrep (custom VAmPI rules)
+      - name: Run Semgrep (registry + custom)
         run: |
-          echo "=== RUNNING SEMGREP ==="
-          semgrep --config=.semgrep --timeout 120 --json --verbose . > semgrep-report.json || true
-
+          echo "=== RUNNING SEMGREP: registry + custom for VAmPI ==="
+          semgrep \
+            --config=r/python-security \
+            --config=p/python.security.audit \
+            --config=.semgrep \
+            --timeout 120 \
+            --json --verbose . \
+          > semgrep-report.json || true
 
       - name: Show Semgrep report
         if: always()
