@@ -55,8 +55,8 @@ jobs:
 
       - name: Run Semgrep
         run: |
-          # semgrep найдёт инъекции и другие проблемы
-          semgrep --config=r/python-security --timeout 120 --json > semgrep-report.json || true
+          # кастомные правила из .semgrep/
+          semgrep --config=.semgrep --timeout 120 --json > semgrep-report.json || true
 
       - name: Show Semgrep report
         if: always()
