@@ -99,9 +99,8 @@ jobs:
   dast-zap:
     name: DAST (OWASP ZAP)
     runs-on: ubuntu-latest
-    if: |
-       github.ref == 'refs/heads/develop' ||
-       (github.event_name == 'pull_request' && github.base_ref == 'develop')
+    # не запускаем на PR, только на реальном пуше в develop
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
     needs: secret-scan
 
     steps:
@@ -110,23 +109,42 @@ jobs:
 
       - name: Launch VAmPI (vulnerable) via Docker Compose
         run: |
+          # на GitHub Runner docker-compose как правило доступен как `docker compose`
           docker compose up -d vampi-vulnerable
+          # ждём, пока flask-сервер поднимется
           sleep 10
 
       - name: OWASP ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.10.0
         with:
+          # чтобы action-baseline знал, куда писать результаты
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # сканируем именно vulnerable-сервис на порту 5002
           target: 'http://localhost:5002'
+          # дополнительные опции, передаются через cmd_options
+          cmd_options: '-T 4'
+          # сам по себе скан не должен падать
           fail_action: false
+          # не пытаться создавать GitHub Issues — у вас они выключены
+          allow_issue_writing: false
+          # имя артефакта, под которым baseline сохранил html-отчёт
           artifact_name: zap-report
-          additional_args: '-T 4'
 
-      - name: Download and show ZAP report
+      - name: Download ZAP report artifact
+        if: always()
+        uses: actions/download-artifact@v3
+        with:
+          name: zap-report
+
+      - name: Show ZAP HTML report
         if: always()
         run: |
           echo "=== ZAP HTML report ==="
+          # baseline action создаёт файл zap-report.html
           cat zap-report.html || echo "FAIL: zap-report.html not found"
 
       - name: Tear down VAmPI
         if: always()
-        run: docker compose down
+        run: |
+          docker compose down
+
