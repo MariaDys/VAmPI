@@ -33,7 +33,7 @@ jobs:
       - name: Show pip-audit report
         if: always()
         run: |
-          echo "=== pip-audit results ==="
+          echo "ОТЧЕТ ПО ЗАВИСИМОСТЯМ"
           cat pip-audit-report.json
 
   static-scan:
@@ -68,7 +68,7 @@ jobs:
       - name: Show Semgrep report
         if: always()
         run: |
-          echo "=== semgrep results ==="
+          echo "SAST РЕЗУЛЬТАТЫ"
           cat semgrep-report.json
           
   secret-scan:
@@ -81,8 +81,6 @@ jobs:
 
       - name: Run Gitleaks CLI in Docker
         run: |
-          # Подмонтируем текущую директорию в /src контейнера,
-          # запустим gitleaks detect и сохраним JSON-отчёт
           docker run --rm \
             -v "${{ github.workspace }}:/src" \
             zricethezav/gitleaks:8.24.3 \
@@ -93,8 +91,31 @@ jobs:
       - name: Show Gitleaks report
         if: always()
         run: |
-          echo "=== Gitleaks Results ==="
+          echo "GITLEAKS РЕЗУЛЬТАТЫ"
           cat gitleaks-report.json || echo "No secrets found."
+
+  trufflehog-scan:
+    name: Secret scan (TruffleHog)
+    runs-on: ubuntu-latest
+    needs: secret-scan
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install TruffleHog
+        run: |
+          pip install trufflehog
+
+      - name: Run TruffleHog scan
+        run: |
+          echo "TRUFFLEHOG РЕЗУЛЬТАТЫ"
+          trufflehog filesystem --directory . --json > trufflehog-report.json || true
+
+      - name: Show TruffleHog report
+        if: always()
+        run: |
+          echo "=== TruffleHog Results ==="
+          cat trufflehog-report.json || echo "No secrets found."
 
   dast-zap:
     name: DAST (OWASP ZAP)
@@ -109,7 +130,7 @@ jobs:
       - name: Start vulnerable app (VAmPI)
         run: |
           docker compose up -d vampi-vulnerable
-          sleep 15  # дать время подняться
+          sleep 15  # немного времени чтобы поднялся
 
       - name: Run OWASP ZAP scan
         uses: zaproxy/action-baseline@v0.10.0
@@ -117,7 +138,6 @@ jobs:
           target: 'http://localhost:5002'
           fail_action: false
           cmd_options: '-n'
-          issue_title: ''
 
       - name: Tear down VAmPI
         if: always()
