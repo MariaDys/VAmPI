@@ -99,7 +99,9 @@ jobs:
   dast-zap:
     name: DAST (OWASP ZAP)
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/develop'
+    if: |
+       github.ref == 'refs/heads/develop' ||
+       (github.event_name == 'pull_request' && github.base_ref == 'develop')
     needs: secret-scan
 
     steps:
@@ -108,7 +110,7 @@ jobs:
 
       - name: Launch VAmPI (vulnerable) via Docker Compose
         run: |
-          docker-compose up -d vampi-vulnerable
+          docker compose up -d vampi-vulnerable
           sleep 10
 
       - name: OWASP ZAP Baseline Scan
@@ -127,4 +129,4 @@ jobs:
 
       - name: Tear down VAmPI
         if: always()
-        run: docker-compose down
+        run: docker compose down
