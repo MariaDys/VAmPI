@@ -17,11 +17,11 @@
 Инструмент: `semgrep` с кастомными (./semgrep) и публичными правилами (p/python https://semgrep.dev/p/python, p/owasp-top-ten https://semgrep.dev/p/owasp-top-ten, p/ci https://semgrep.dev/p/ci)
 
 Semgrep обнаружил **9 потенциальных уязвимостей**, среди которых:
-- WARNING: Разные ответы при различном логине/пароле (api_views/users.py:103,106) 
-- ERROR: Доступ к объектам с неправильной проверкой прав (api_views/books.py:51)
-- ERROR: Возможность несанкционированного изменения пароля (username берется из url, пароль меняется без проверки прав пользователя) api_views/users.py:187,194
-- ERROR: Возможность SQL-инъекции (api_views/users.py:187,194)
-- WARNING: Риск ReDoS (api_views/users.py:144)
+- WARNING: Разные ответы при различном логине/пароле (api_views/users.py:103,106) (общий вид ошибки)
+- ERROR: Доступ к объектам с неправильной проверкой прав (api_views/books.py:51) (централизованная проверка прав)
+- ERROR: Возможность несанкционированного изменения пароля (username берется из url, пароль меняется без проверки прав пользователя) api_views/users.py:187,194 (логирование, 
+- ERROR: Возможность SQL-инъекции (api_views/users.py:187,194) (параметризованные запросы, ORM чтобы не писать sql код)
+- WARNING: Риск ReDoS (api_views/users.py:144) (таймауты для пользовательского ввода, ограничения на длину)
 
 ### 3. Secret Scan
 
