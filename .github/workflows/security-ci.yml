@@ -116,6 +116,8 @@ jobs:
         with:
           target: 'http://localhost:5002'
           fail_action: false
+          cmd_options: '-n'
+          issue_title: ''
 
       - name: Tear down VAmPI
         if: always()
